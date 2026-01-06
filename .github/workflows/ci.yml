@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  docker-build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t ci-cd-demo:latest .
+
+      - name: Run container (quick test)
+        run: |
+          docker run -d --name webtest -p 8080:80 ci-cd-demo:latest
+          sleep 2
+          curl -I http://localhost:8080
+          docker rm -f webtest
